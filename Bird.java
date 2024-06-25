@@ -1,19 +1,27 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Bird {
 
-    private static final int SIZE = 20; // Size of the bird
     private static final int GRAVITY = 1;
     private static final int JUMP_STRENGTH = -18;
 
     private int x;
     private int y;
     private int velocity;
+    private BufferedImage birdImage;
 
     public Bird(int x, int y) {
         this.x = x;
         this.y = y;
         velocity = 0;
+        try {
+            birdImage = ImageIO.read(getClass().getResource("/bird.png")); // Load the bird image
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void update() {
@@ -22,29 +30,13 @@ public class Bird {
     }
 
     public void draw(Graphics g) {
-        // Draw bird shape (crow-like)
-        g.setColor(Color.BLACK);
-
-        // Body
-        g.fillOval(x, y, SIZE, SIZE);
-
-        // Head
-        g.fillOval(x + 10, y - 5, SIZE - 10, SIZE - 10);
-
-        // Beak
-        int[] beakX = {x + 20, x + 22, x + 25};
-        int[] beakY = {y - 1, y + 5, y + 1};
-        g.setColor(Color.ORANGE);
-        g.fillPolygon(beakX, beakY, 3);
-
-        // Eyes
-        g.setColor(Color.WHITE);
-        g.fillOval(x + 15, y - 2, 4, 4);
-
-        // Wings
-        g.setColor(Color.BLACK);
-        g.fillPolygon(new int[]{x + SIZE - 5, x + SIZE + 5, x + SIZE - 5}, new int[]{y + 5, y + SIZE / 2, y + SIZE - 5}, 3);
-        g.fillPolygon(new int[]{x - 5, x + 5, x - 5}, new int[]{y + 5, y + SIZE / 2, y + SIZE - 5}, 3);
+        if (birdImage != null) {
+            g.drawImage(birdImage, x, y, null); // Draw the bird image
+        } else {
+            // If the image fails to load, draw a placeholder shape
+            g.setColor(Color.BLACK);
+            g.fillOval(x, y, 20, 20);
+        }
     }
 
     public void jump() {
@@ -52,7 +44,7 @@ public class Bird {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, SIZE, SIZE);
+        return new Rectangle(x, y, birdImage.getWidth(), birdImage.getHeight());
     }
 
     public int getY() {
